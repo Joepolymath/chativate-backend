@@ -30,5 +30,9 @@ const chatSchema = new mongoose.Schema(
   }
 );
 
+chatSchema.pre("save", () => {
+  console.log(this);
+});
+
 const Chat = mongoose.model("Chat", chatSchema);
 module.exports = Chat;

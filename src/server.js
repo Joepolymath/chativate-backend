@@ -2,27 +2,33 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const morgan = require("morgan");
 const cors = require("cors");
+const colors = require("colors");
+
 const chats = require("./data/data");
+const connectDB = require("./config/db.config");
+const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// connecting to db
+connectDB();
+
+// middlewares
+app.use(express.json());
 app.use(morgan("tiny"));
 app.use(cors());
+
 app.get("/", (req, res) => {
   res.send("API running");
 });
 
-app.get("/api/chat", (req, res) => {
-  res.send(chats);
-});
+app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/chats", require("./routes/chatRoutes"));
 
-app.get("/api/chat/:id", (req, res) => {
-  const id = req.params.id;
-  const chat = chats.find((chat) => chat._id === id);
-  res.send(chat);
-});
+// introducing error Handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`.bgBlue.black);
 });

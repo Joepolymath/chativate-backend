@@ -20,5 +20,9 @@ const messageSchema = mongoose.Schema(
   }
 );
 
+messageSchema.pre("save", () => {
+  console.log(this);
+});
+
 const Message = mongoose.model("Message", messageSchema);
 module.exports = Message;
