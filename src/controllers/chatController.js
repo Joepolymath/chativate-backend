@@ -57,20 +57,20 @@ const accessChat = asyncHandler(async (req, res) => {
 // @scope   Private
 const fetchChats = asyncHandler(async (req, res) => {
   try {
-    const chats = await Chat.find({
-      users: { $elemMatch: { $eq: req.user._id } },
-    })
+    Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
       .populate("latestMessage")
-      .sort({ updatedAt: -1 });
-    //  chats = await User.populate(chats, {
-    //    path: "latestMessage.sender",
-    //    select: "name pic email",
-    //  });
-    res
-      .status(200)
-      .json({ status: true, message: "message retrieved", data: chats });
+      .sort({ updatedAt: -1 })
+      .then(async (results) => {
+        results = await User.populate(results, {
+          path: "latestMessage.sender",
+          select: "name pic email",
+        });
+        res
+          .status(200)
+          .json({ status: true, message: "message retrieved", data: results });
+      });
   } catch (error) {
     res.status(400);
     throw new Error("Unable to retrieve chats");
