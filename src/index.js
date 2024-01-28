@@ -34,6 +34,8 @@ const server = app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`.bgBlue.black);
 });
 
+module.exports = app;
+
 const io = require('socket.io')(server, {
   pingTimeout: 60000,
   cors: {
